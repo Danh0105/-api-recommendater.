@@ -14,11 +14,13 @@ class SimilarityController extends Controller
     public function index(): array
     {
         $arraySimilarity = [];
-        foreach ($this->array_init as $key1 => $row1) {
-            foreach ($this->array_init as $key2 => $row2) {
+        foreach ($this->array_init as $key1 => $row1)
+        {
+            foreach ($this->array_init as $key2 => $row2)
+            {
                 $cosin = new cosineSimilarity($row1, $row2);
                 $result = $cosin->index();
-                $arraySimilarity[$key1][$key2] = $result;
+                $arraySimilarity[$key1][$key2] = round($result, 2);
             }
 
         }

@@ -16,35 +16,40 @@ class NormalizedController extends Controller
         $normalizedMatrix = $this->array_init;
         $arraySum = [];
 
-        foreach ($this->array_init as $row => $value) {
-            $filteredArray = array_filter($value, function ($temp) {
-                return $temp != -1;
-            });
-            $sum = array_sum($filteredArray);
+        try {
 
-            $count = count($value) - array_count_values($value)[-1];
+            foreach ($this->array_init as $row => $value) {
+                $filteredArray = array_filter($value, function ($temp) {
+                    return $temp != -1;
+                });
+                $sum = array_sum($filteredArray);
 
-            if ($count != -1) {
-                $average = round($sum / $count, 2);
-            } else {
-                $average = 0;
-            }
+                $count = count($value) - array_count_values($value)[-1];
 
-            $arraySum[$row] = $average;
-        }
-        foreach ($this->array_init as $rowKey => $row) {
-            foreach ($row as $colKey => $colValue) {
-                if ($normalizedMatrix[$rowKey][$colKey] != -1) {
-                    $normalizedMatrix[$rowKey][$colKey] -= $arraySum[$rowKey];
+                if ($count != -1) {
+                    $average = round($sum / $count, 2);
                 } else {
-                    $normalizedMatrix[$rowKey][$colKey] = 0;
+                    $average = 0;
+                }
+
+                $arraySum[$row] = $average;
+            }
+            foreach ($this->array_init as $rowKey => $row) {
+                foreach ($row as $colKey => $colValue) {
+                    if ($normalizedMatrix[$rowKey][$colKey] != -1) {
+                        $normalizedMatrix[$rowKey][$colKey] -= $arraySum[$rowKey];
+                    } else {
+                        $normalizedMatrix[$rowKey][$colKey] = 0;
+                    }
                 }
             }
+            return [
+                "Nor" => $normalizedMatrix,
+                "AVG" => $arraySum
+            ];
+        } catch (Exception $e) {
+            return ["Mảng không đúng định dạng"];
         }
-        return [
-            "Nor" => $normalizedMatrix,
-            "AVG" => $arraySum
-        ];
     }
 
 
