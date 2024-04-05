@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 
 class NormalizedController extends Controller
@@ -18,7 +19,9 @@ class NormalizedController extends Controller
 
         try {
 
-            foreach ($this->array_init as $row => $value) {
+            foreach ($this->array_init as $row => $value)
+            {
+
                 $filteredArray = array_filter($value, function ($temp) {
                     return $temp != -1;
                 });
@@ -26,14 +29,18 @@ class NormalizedController extends Controller
 
                 $count = count($value) - array_count_values($value)[-1];
 
-                if ($count != -1) {
+                if ($count != -1)
+                {
                     $average = round($sum / $count, 2);
-                } else {
+                }
+                else
+                {
                     $average = 0;
                 }
 
                 $arraySum[$row] = $average;
             }
+            
             foreach ($this->array_init as $rowKey => $row) {
                 foreach ($row as $colKey => $colValue) {
                     if ($normalizedMatrix[$rowKey][$colKey] != -1) {
@@ -48,7 +55,7 @@ class NormalizedController extends Controller
                 "AVG" => $arraySum
             ];
         } catch (Exception $e) {
-            return ["Mảng không đúng định dạng"];
+            return response()->json(["mess" => "Something wrong", "status" => 500]);
         }
     }
 

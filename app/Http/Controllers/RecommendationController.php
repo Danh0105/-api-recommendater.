@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -62,9 +63,10 @@ class RecommendationController extends Controller
                 "i4" => "5",
                 ],
             ]; */
-        if ($request->has('K') && $request['K'] >= (count($request["matrix"]) - 1))
+        try{
+            if ($request->has('K') && $request['K'] >= (count($request["matrix"]) - 1))
         {
-            return response()->json(["mess" => "K không được lớn hơn hoặc bằng " . (count($request["matrix"]) - 1), "status" => 500]);
+            return response()->json(["mess" => "K must not be greater than or equal to. " . (count($request["matrix"]) - 1), "status" => 500]);
         }
         $normalized = new NormalizedController($request["matrix"]);
         $arrayNormalized = $normalized->index();
@@ -75,22 +77,11 @@ class RecommendationController extends Controller
         $predict = new PredictController($arrayNormalized['Nor'], $arrayNormalized['AVG'], $arrSimilarity, $request['K']);
         $result = $predict->index();
         return response()->json($result);
-        /* try
+        } catch (Exception $e)
         {
-            //Normalized utility matrix 
-            $normalized = new NormalizedController($request["matrix"]);
-            $arrayNormalized = $normalized->index();
-            //Similarity matrix
-            $Simalarity = new SimilarityController($arrayNormalized['Nor']);
-            $arrSimilarity = $Simalarity->index();
-            //Predict
-            $predict = new PredictController($arrayNormalized['Nor'], $arrayNormalized['AVG'], $arrSimilarity, 2);
-            $result = $predict->index();
-            return response()->json($result);
-        } catch (\Exception $e)
-        {
-            return response()->json($e->getMessage());
-        } */
+                        return response()->json(["mess" => "K must not be greater than or equal to. "]);
+
+        }
     }
 }
 
